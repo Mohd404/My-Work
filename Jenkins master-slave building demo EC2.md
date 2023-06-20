@@ -1,6 +1,6 @@
 # Jenkins master-slave building demo EC2:
 
-### Open our AWS EC2 Dashboard.
+### Open your AWS EC2 Dashboard.
 1. Create Jenkin_Server instance `(Master)`.
 2. Create Build_Server instance `(Slave)`.
 3. Connect to the systems using `ssh`.

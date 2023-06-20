@@ -4,7 +4,7 @@
 ```
 apk add openjdk11 
 docker pull jenkins/jenkins:lts
-docker run -u 0 -d -p 8082:8080 -p 50002:50000 -v //C/Users/Lars/jenkins:/var/jenkins_home jenkins/jenkins:lts
+docker run -u 0 -d -p 8082:8080 -p 50002:50000 --name jenkins jenkins:latest
 docker exec -it cont-name /bin/bash
 cat /var/lib/jenkins/secrets/initialAdminPassword
 ```

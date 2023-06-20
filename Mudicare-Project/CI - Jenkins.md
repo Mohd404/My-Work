@@ -1,8 +1,9 @@
-Continuous Integration using Jenkins
-Installing tools (Manually)
+# Continuous Integration using Jenkins
 
-First we need to install Jenkins and Maven
+# Installing tools (Manually)
 
+First we need to install `Jenkins` and `Maven`
+```
 #!/bin/bash
 
 # Update packages
@@ -24,23 +25,23 @@ echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins
   
 sudo apt update
 sudo apt install -y jenkins
-
-start jenkins
-
+```
+start `jenkins`
+```
 sudo systemctl start jenkins
+```
 
-Installing Tomcat Server
-
-For installing tomcat navigate to /opt directory, then run the following commands
-
+## Installing Tomcat Server
+For installing tomcat navigate to `/opt` directory, then run the following commands
+```
 sudo wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.76/bin/apache-tomcat-9.0.76.tar.gz
 sudo tar -xvzf apache-tomcat-9.0.76.tar.gz
 sudo mv apache-tomcat-9.0.76 tomcat      // rename the dirctory to tomcat
+```
 
-Tomcat configuration
-
+### Tomcat configuration
 We need to edit context.xml to access manager gui. Comment the following codes in the following files
-
+```
 <!--  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
          allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
 -->
@@ -48,11 +49,11 @@ We need to edit context.xml to access manager gui. Comment the following codes i
 
 nano /opt/tomcat/webapps/host-manager/META-INF/context.xml
 nano /opt/tomcat/webapps/manager/META-INF/context.xml
+```
+## Change the default port no for Tomcat
 
-Change the default port no for Tomcat
-
-Jenkins is running in port no 8080 and tomcat by default is run in port no 8080. we need to change the port no to 8082 to run it without errors.
-
+Jenkins is running on port `8080` and tomcat by default is run in port `8080`. we need to change the port to `8082` to run it without errors.
+```
 sudo nano /opt/tomcat/conf/server.xml
 
 <Connector port="8082" protocol="HTTP/1.1"
@@ -60,32 +61,32 @@ sudo nano /opt/tomcat/conf/server.xml
            redirectPort="8443"
            maxParameterCount="1000"
                />
+```
+## Add Username and Password for Tomcat
 
-Add Username and Password for Tomcat
-
-navigate to /opt/tomcat/conf/ and using nano editor open tomcat-users.xml and add the following codes before </tomcat-users>
-
+navigate to /opt/tomcat/conf/ and using `nano` editor open `tomcat-users.xml` and add the following codes before `</tomcat-users>`
+```
 <role rolename="manager-gui"/>
 <role rolename="admin-gui"/>
 <role rolename="manager-script"/>
 <role rolename="manager-jmx"/>
 <role rolename="manager-status"/>
 <user username="admin" password="admin" roles="manager-gui,admin-gui,manager-script"/>
-
+```
 after configure tomcat server restart it to apply the changes
-
+```
 cd /opt/tomcat/bin
 ./shutdown.sh
 ./startup.sh
+```
+## Clone the Medicure repository
 
-Clone the Medicure repository
-
-    Clone the Medicure repository form the mc01 branch.
-    Create new github repository in your account.
-    Clone the created repository and copy the Medicaure files to your cloned directory.
-    For running the project in external tomcat we need to add ServletInitializer.java and give dependency
-    create ServletInitializer.java in /src/main/java/com/nubeera/ and copy the following codes
-
+   1. Clone the Medicure repository form the `mc01` branch.
+   2. Create new github repository in your account.
+   3. Clone the created repository and copy the Medicaure files to your cloned directory.
+   4. For running the project in external tomcat we need to add `ServletInitializer.java` and give `dependency`
+   5. create `ServletInitializer.java` in `/src/main/java/com/nubeera/` and copy the following codes
+```
 package com.nubeera;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -98,42 +99,47 @@ public class ServletInitializer extends SpringBootServletInitializer {
         return application.sources(MedicureApplication.class);
     }
 }
-
-    Add the following dependency to run the project in external tomcat
-
+```
+   6. Add the following dependency to run the project in external tomcat
+```
       <dependency>
          <groupId>org.springframework.boot</groupId>
          <artifactId>spring-boot-starter-tomcat</artifactId>
          <scope>provided</scope>
       </dependency>
+```
+## Jenkins configuration
 
-Jenkins configuration
-
-    Jenkins by default run in port no 8080, to access jenkins GUI open the following link in browser http://localhost:8080.
-    To login we need to copy the Administrator password, to get the Administrator password use the following command.
-
+   1. Jenkins by default run in port no `8080`, to access jenkins GUI open the following link in browser `http://localhost:8080`.
+   2. To login we need to copy the Administrator password, to get the Administrator password use the following command.
+```
 cat /var/lib/jenkins/secrets/initialAdminPassword
-
-    Copy the password and paste it in jenkins Administrator password field.
-    Click the X on the right top to close plugin install and then click start using Jenkins.
-    Click on the admin to give new password, then Configure, then give new password and apply and save.
-    Install piepline plugins from Manage jenkins then Plugins.
-    Select Available plugins then search for pipeline and pipeline:Stage View plugins then install without restart.
-    After installing done select Go back to the top page.
+```
+   3. Copy the password and paste it in jenkins Administrator password field.
+   4. Click the `X` on the right top to close plugin install and then click `start using Jenkins`.
+   5. Click on the `admin` to give new password, then `Configure`, then give new password and `apply` and `save`.
+   6. Install `piepline` plugins from `Manage jenkins` then `Plugins`.
+   7. Select `Available plugins` then search for `pipeline` and `pipeline:Stage View` plugins then `install without restart`.
+   8. After installing done select Go back to the top page.
 
 OR
-Install Jenkins User (Automatically)
 
-#! /bin/bash url=http://localhost:8080 password=$(sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
+### Install Jenkins User (Automatically)
+
+#! /bin/bash url=http://localhost:8080 
+password=$(sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
 
 alias python=python3
-NEW ADMIN CREDENTIALS URL ENCODED USING PYTHON
+
+#### NEW ADMIN CREDENTIALS URL ENCODED USING PYTHON
 
 username=$(python -c "import urllib.parse;print(urllib.parse.quote(input(), safe=''))" <<< "admin") new_password=$(python -c "import urllib.parse;print(urllib.parse.quote(input(), safe=''))" <<< "admin") fullname=$(python -c "import urllib.parse;print(urllib.parse.quote(input(), safe=''))" <<< "NubeEra") email=$(python -c "import urllib.parse;print(urllib.parse.quote(input(), safe=''))" <<< "admin@gmail.com")
-GET THE CRUMB AND COOKIE
+
+#### GET THE CRUMB AND COOKIE
 
 cookie_jar="$(mktemp)" full_crumb=$(curl -u "admin:$password" --cookie-jar "$cookie_jar" $url/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,%22:%22,//crumb)) arr_crumb=(${full_crumb//:/ }) only_crumb=$(echo ${arr_crumb[1]})
-MAKE THE REQUEST TO CREATE AN ADMIN USER
+
+#### MAKE THE REQUEST TO CREATE AN ADMIN USER
 
 curl -X POST -u "admin:$password" $url/setupWizard/createAdminUser
 -H "Connection: keep-alive"
@@ -143,14 +149,16 @@ curl -X POST -u "admin:$password" $url/setupWizard/createAdminUser
 -H "Content-Type: application/x-www-form-urlencoded"
 --cookie $cookie_jar
 --data-raw "username=$username&password1=$new_password&password2=$new_password&fullname=$fullname&email=$email&Jenkins-Crumb=$only_crumb&json=%7B%22username%22%3A%20%22$username%22%2C%20%22password1%22%3A%20%22$new_password%22%2C%20%22%24redact%22%3A%20%5B%22password1%22%2C%20%22password2%22%5D%2C%20%22password2%22%3A%20%22$new_password%22%2C%20%22fullname%22%3A%20%22$fullname%22%2C%20%22email%22%3A%20%22$email%22%2C%20%22Jenkins-Crumb%22%3A%20%22$only_crumb%22%7D&core%3Aapply=&Submit=Save&json=%7B%22username%22%3A%20%22$username%22%2C%20%22password1%22%3A%20%22$new_password%22%2C%20%22%24redact%22%3A%20%5B%22password1%22%2C%20%22password2%22%5D%2C%20%22password2%22%3A%20%22$new_password%22%2C%20%22fullname%22%3A%20%22$fullname%22%2C%20%22email%22%3A%20%22$email%22%2C%20%22Jenkins-Crumb%22%3A%20%22$only_crumb%22%7D"
-Configure Jenkins URL
+
+### Configure Jenkins URL
 
 #! /bin/bash url=http://localhost:8080
 
 user=admin password=admin
 
 cookie_jar="$(mktemp)" full_crumb=$(curl -u "$user:$password" --cookie-jar "$cookie_jar" $url/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,%22:%22,//crumb)) arr_crumb=(${full_crumb//:/ }) only_crumb=$(echo ${arr_crumb[1]})
-MAKE THE REQUEST TO DOWNLOAD AND INSTALL REQUIRED MODULES
+
+#### MAKE THE REQUEST TO DOWNLOAD AND INSTALL REQUIRED MODULES
 
 curl -X POST -u "$user:$password" $url/pluginManager/installPlugins
 -H 'Connection: keep-alive'
@@ -161,14 +169,15 @@ curl -X POST -u "$user:$password" $url/pluginManager/installPlugins
 -H 'Accept-Language: en,en-US;q=0.9,it;q=0.8'
 --cookie $cookie_jar
 --data-raw "{'dynamicLoad':true,'plugins':['cloudbees-folder','antisamy-markup-formatter','build-timeout','credentials-binding','timestamper','ws-cleanup','ant','gradle','workflow-aggregator','github-branch-source','pipeline-github-lib','pipeline-stage-view','git','ssh-slaves','matrix-auth','pam-auth','ldap','email-ext','mailer'],'Jenkins-Crumb':'$only_crumb'}"
-Install Recommended Plugins
 
+### Install Recommended Plugins
 #! /bin/bash url=http://localhost:8080
 
 user=admin password=admin
 
 cookie_jar="$(mktemp)" full_crumb=$(curl -u "$user:$password" --cookie-jar "$cookie_jar" $url/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,%22:%22,//crumb)) arr_crumb=(${full_crumb//:/ }) only_crumb=$(echo ${arr_crumb[1]})
-MAKE THE REQUEST TO DOWNLOAD AND INSTALL REQUIRED MODULES
+
+#### MAKE THE REQUEST TO DOWNLOAD AND INSTALL REQUIRED MODULES
 
 curl -X POST -u "$user:$password" $url/pluginManager/installPlugins
 -H 'Connection: keep-alive'
@@ -179,10 +188,11 @@ curl -X POST -u "$user:$password" $url/pluginManager/installPlugins
 -H 'Accept-Language: en,en-US;q=0.9,it;q=0.8'
 --cookie $cookie_jar
 --data-raw "{'dynamicLoad':true,'plugins':['cloudbees-folder','antisamy-markup-formatter','build-timeout','credentials-binding','timestamper','ws-cleanup','ant','gradle','workflow-aggregator','github-branch-source','pipeline-github-lib','pipeline-stage-view','git','ssh-slaves','matrix-auth','pam-auth','ldap','email-ext','mailer'],'Jenkins-Crumb':'$only_crumb'}"
-Create Jenkins Job
 
-Create new jenkins job using pipeline and add the following configration in script section
+## Create Jenkins Job
 
+Create new jenkins job using `pipeline` and add the following configration in `script` section
+```
 pipeline {
     agent any
     stages {
@@ -203,16 +213,17 @@ pipeline {
         }
     }
 }
-
-change the Clone Code stage with your Github url repository. Before build the job change the permission of the /opt directory to allow jenkins user to copy the files to tomcat server
-
+```
+change the `Clone Code` stage with your `Github` url repository.
+Before build the job change the permission of the `/opt` directory to allow jenkins user to copy the files to tomcat server
+```
 cd /
 sudo chmod 777 -R /opt
-
-To build the job automatically in every changes made to github repository use the Poll SCM to check the code every minute
-
+```
+To build the job automatically in every changes made to github repository use the `Poll SCM` to check the code every minute
+```
 * * * * *
+```
+## Test the hosting
 
-Test the hosting
-
-To see the running application open the browser and type http://localhost:8082, then Manage App the username and password is admin for both, then click on Medicure-1.0-SNAPSHOT
+To see the running application open the browser and type `http://localhost:8082`, then `Manage App` the username and password is `admin` for both, then click on `Medicure-1.0-SNAPSHOT`

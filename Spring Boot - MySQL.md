@@ -1,5 +1,5 @@
-Install Java and Maven
-
+# Install Java and Maven
+```
 sudo apt update
 sudo apt install default-jdk
 java -version
@@ -7,17 +7,18 @@ sudo apt install maven
 mvn -version
 sudo apt install mysql-server
 sudo systemctl start mysql
+```
+# Set up a Maven project
 
-Set up a Maven project
-
-This command creates a new Maven project with the artifact ID "spring-mysql" under the "com.example" package.
-
+This command creates a new Maven project with the artifact ID `spring-mysql` under the `com.example` package.
+```
 mvn archetype:generate -DgroupId=com.example -DartifactId=spring-mysql -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+```
 
-Set up the project structure and dependencies
+## Set up the project structure and dependencies
 
-Add the following dependencies in the pom.xml file:
-
+### Add the following dependencies in the pom.xml file:
+```
 <parent>
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-starter-parent</artifactId>
@@ -54,57 +55,62 @@ Add the following dependencies in the pom.xml file:
 		</plugin>
 	</plugins>
 </build>
+```
 
-Create MySql Database
+## Create MySql Database
 
-    Open a terminal or command prompt.
-    Connect to the MySQL server using the command line:
-
+  ####  Open a terminal or command prompt.
+  ####  Connect to the MySQL server using the command line:
+```
 mysql -u username -p
+```
 
-Replace username with your MySQL username. You will be prompted to enter your MySQL password. 3. Create a new database
+#### 1. Replace `username` with your `MySQL username`. 
+#### 2. You will be prompted to enter your `MySQL password`.
+#### 3. Create a new `database`.
 
-CREATE DATABASE booksdb;
+## CREATE DATABASE booksdb;
 
-    Switch to the newly created database
+   ### Switch to the newly created database
 
-USE booksdb;
+#### USE booksdb;
 
-    Create a table called book with the desired fields
-
+   ##### Create a table called book with the desired fields
+```
 CREATE TABLE book (id INT AUTO_INCREMENT PRIMARY KEY,book_name VARCHAR(50),isbn_number VARCHAR(50));
+```
+ #####   Verify that the table was created successfully
 
-    Verify that the table was created successfully
+#### DESCRIBE book;
 
-DESCRIBE book;
-
-    To add data to the table, use the INSERT INTO statement followed by the table name and the column names
-
+   ##### To add data to the table, use the INSERT INTO statement followed by the table name and the column names
+```
 INSERT INTO book (id, book_name, isbn_number) VALUES (1, 'ABC', '12345');
-
-    Confirm that the data has been added to the table by running a SELECT query
-
+```
+ #####   Confirm that the data has been added to the table by running a SELECT query
+```
 SELECT * FROM book;
-
-    Exit the MySQL prompt
-
+```
+  #####  Exit the MySQL prompt
+```
 exit
+```
 
-Configure MySQL database connection
+## Configure MySQL database connection
 
-Open the application.properties file in src/main/reresources and add the following configuration:
-
+### Open the application.properties file in `src/main/reresources` and add the following configuration:
+```
 spring.jpa.hibernate.ddl-auto=update
 spring.datasource.url=jdbc:mysql://localhost:3306/<your-database-name>?serverTimezone=UTC&useSSL=false&autoReconnect=true
 spring.datasource.username=<your-username>
 spring.datasource.password=<your-password>
 server.port=8082
 connected with MySQL
+```
+## Create java classes
 
-Create java classes
-
-    SampleAccessingOfMysqlApplication.java
-
+  ###  SampleAccessingOfMysqlApplication.java
+```
 package com.example;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -115,9 +121,9 @@ public class SampleAccessingOfMysqlApplication {
         SpringApplication.run(SampleAccessingOfMysqlApplication.class, args);
     }
 }
-
-    Book.java
-
+```
+  ###  Book.java
+```
 package com.example;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -161,9 +167,10 @@ public class Book {
     }
       
 }
+```
 
-    BookRepository.java
-
+###    BookRepository.java
+```
 package com.example;
 import org.springframework.data.repository.CrudRepository;
   
@@ -173,9 +180,10 @@ import org.springframework.data.repository.CrudRepository;
 public interface BookRepository extends CrudRepository<Book, Integer> {
   
 }
+```
 
-    BookController.java
-
+###    BookController.java
+```
 package com.example;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -222,8 +230,10 @@ public class BookController {
         return bookRepository.findAll();
     }
 }
+```
 
-Test the application
+## Test the application
 
-Open a web browser and visit http://localhost:8082/geek/books to access the running Spring Boot application. You should see data in JSON Format in the browser. You can test the application after see the following output:
+Open a web browser and visit http://localhost:8082/geek/books to access the running Spring Boot application.
+You should see data in JSON Format in the browser. You can test the application after see the following output.
 

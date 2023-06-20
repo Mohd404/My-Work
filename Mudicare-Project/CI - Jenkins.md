@@ -1,6 +1,6 @@
 # Continuous Integration using Jenkins
 
-# Installing tools (Manually)
+## Installing tools (Manually)
 
 First we need to install `Jenkins` and `Maven`
 ```

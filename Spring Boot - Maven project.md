@@ -78,4 +78,5 @@ mvn spring-boot:run
 ```
 ## Test the application:
 Open a web browser http://localhost:8080
+
 Output: `Hello Mr. Mohd Hassan`
